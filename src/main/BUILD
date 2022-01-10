@@ -17,9 +17,11 @@ cc_library(
     "debugger.h",
     "constants.h",
     "string_util.h",
+    "breakpoint.h"
   ],
   deps = [
     ":string-util",
+    ":breakpoint",
     "//ext:linenoise"
   ]
 )
@@ -28,4 +30,10 @@ cc_library(
   name = "string-util",
   srcs = ["string_util.cc"],
   hdrs = ["string_util.h"]
+)
+
+cc_library(
+  name = "breakpoint",
+  srcs = ["breakpoint.cc"],
+  hdrs = ["breakpoint.h"]
 )

@@ -11,8 +11,10 @@ extern "C" {
   #include "ext/linenoise.h"
 }
 
+using std::string;
 
 #include "debugger.h"
+#include "breakpoint.h"
 #include "constants.h"
 #include "string_util.h"
 
@@ -40,6 +42,11 @@ void Debugger::HandleCommand(const std::string& line)
 
   if (StringUtil::IsPrefix(command, Constants::CMD_CONTINUE)) {
     ContinueExecution();
+  } else if (StringUtil::IsPrefix(command, Constants::CMD_BREAK)) {
+    /* asume that the user has written 0xADDRESS */
+    string addr {args[1], 2};
+
+    SetBreakpointAtAddress(std::stol(addr, 0, 16));
   } else {
     std::cerr << "Unknown command " << command << std::endl;
   }
@@ -52,4 +59,12 @@ void Debugger::ContinueExecution()
   int waitStatus;
   auto options = 0;
   waitpid(pid, &waitStatus, options);
+}
+
+void Debugger::SetBreakpointAtAddress(const std::intptr_t addr)
+{
+  std::cout << "Set breakpoint at address 0x" << std::hex << addr << std::endl;
+  Breakpoint bp{pid, addr};
+  bp.Enable();
+  breakpoints[addr] = bp;
 }
